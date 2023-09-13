@@ -3,11 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import cors from "cors";
 
 const app = express();
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://node-project-production-dadb.up.railway.app",
-  "https://lista-de-contatos-12fdd.web.app",
-];
+const allowedOrigins = ["http://localhost:3000"];
 
 app.use(json());
 app.use(
@@ -16,67 +12,63 @@ app.use(
   })
 );
 
-const contacts = [];
+const products = [];
 
 app.get("/", (req, res) => {
   res.send("Node JS api");
 });
 
-app.get("/api/contacts", (req, res) => {
-  const { uid } = req.query;
-  const filteredContacts = contacts.filter((contact) => contact.uid === uid);
-  res.send(filteredContacts);
+app.get("/api/products", (req, res) => {
+  res.send(products);
 });
 
-app.get("/api/contacts/:id", (req, res) => {
-  const contact = contacts.find((c) => c.id === req.params.id);
-  if (!contact) return res.status(404).send("Conacto no encontrado");
-  else res.send(contact);
+app.get("/api/products/:id", (req, res) => {
+  const product = products.find((p) => p.id === req.params.id);
+  if (!product) return res.status(404).send("Produto no encontrado");
+  else res.send(product);
 });
 
-app.post("/api/contacts", (req, res) => {
-  const contact = {
+app.post("/api/products", (req, res) => {
+  const product = {
     id: uuidv4(),
     nome: req.body.nome,
-    tlf: parseInt(req.body.tlf),
-    email: req.body.email,
-    endereco: req.body.endereco,
-    gender: req.body.gender,
-    uid: req.body.uid,
+    description: req.body.description,
+    price: req.body.price,
+    category: req.body.category,
+    image: req.body.image,
   };
 
-  contacts.push(contact);
-  res.send(contact);
+  products.push(product);
+  res.send(product);
 });
 
-app.put("/api/contacts/:id", (req, res) => {
-  const contactId = req.params.id;
-  const contactIndex = contacts.findIndex((c) => c.id === contactId);
+app.put("/api/products/:id", (req, res) => {
+  const productId = req.params.id;
+  const productIndex = products.findIndex((p) => p.id === productId);
 
-  if (contactIndex === -1) {
+  if (productIndex === -1) {
     return res.status(404).send("Contacto no encontrado");
   }
 
-  const updatedContact = {
-    id: contactId,
+  const updatedProduct = {
+    id: productId,
     nome: req.body.nome,
-    tlf: parseInt(req.body.tlf),
-    email: req.body.email,
-    endereco: req.body.endereco,
-    gender: req.body.gender,
-    uid: req.body.uid,
+    description: req.body.description,
+    price: req.body.price,
+    category: req.body.category,
+    image: req.body.image,
   };
 
-  contacts[contactIndex] = updatedContact;
-  res.send(updatedContact);
+  products[productIndex] = updatedProduct;
+  res.send(updatedProduct);
 });
 
-app.delete("/api/contacts/:id", (req, res) => {
-  const contact = contacts.find((c) => c.id === req.params.id);
-  if (!contact) return res.status(404).send("Contacto no encontrado");
-  const index = contacts.indexOf(contact);
-  contacts.splice(index, 1);
-  res.send(contact);
+app.delete("/api/products/:id", (req, res) => {
+  const product = products.find((p) => p.id === req.params.id);
+  if (!product) return res.status(404).send("Produto no encontrado");
+  const index = products.indexOf(product);
+  products.splice(index, 1);
+  res.send(product);
 });
 
 const port = process.env.PORT || 80;
